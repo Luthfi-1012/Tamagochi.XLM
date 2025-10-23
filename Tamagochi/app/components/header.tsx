@@ -1,0 +1,61 @@
+import React from "react";
+import { useGame } from "~/context/game-context";
+import { WalletConnection } from "./wallet-connection";
+import { SyncButton } from "./sync-button";
+import { CreatePetDialog } from "./create-pet-dialog";
+
+export function Header() {
+  const { gameState, selectActivePet } = useGame();
+
+  return (
+    <header className="w-full border-b-4 border-border bg-card pixel-shadow sticky top-0 z-10">
+      <div className="container mx-auto px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between">
+          {/* Title */}
+          <div className="flex-1">
+            <h1 className="text-sm sm:text-xl md:text-2xl font-bold pixel-text-shadow">
+              🎮 Tamagochi XLM
+            </h1>
+          </div>
+
+          {/* Pet Switcher + Coins Display */}
+          <div className="flex items-center gap-2 sm:gap-4 h-9">
+            {/* Pet Switcher */}
+            <div className="hidden sm:flex items-center gap-2">
+              <label className="text-xs" htmlFor="pet-switcher">Pet</label>
+              <select
+                id="pet-switcher"
+                className="border-2 border-border bg-background px-2 py-1 text-xs"
+                value={gameState.activePetId ?? ""}
+                onChange={(e) => selectActivePet(e.target.value)}
+                disabled={!gameState.pets?.length}
+              >
+                {!gameState.pets?.length ? (
+                  <option value="">No pets</option>
+                ) : (
+                  gameState.pets.map((p) => (
+                    <option key={p.id} value={p.id}>{p.name}</option>
+                  ))
+                )}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-1 sm:gap-2 bg-accent px-2 sm:px-4 py-2 border-2 border-border pixel-shadow hover:translate-y-1 h-9">
+              <span className="text-xs sm:text-sm animate-coin">💰</span>
+              <span className="text-xs sm:text-sm font-bold text-accent-foreground">
+                {gameState.coins}
+              </span>
+            </div>
+
+            {/* Wallet Connection & Sync */}
+            <div className="hidden sm:flex items-center gap-2 h-9">
+              <CreatePetDialog />
+              <SyncButton />
+              <WalletConnection />
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
